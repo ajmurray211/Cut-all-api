@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'cutall_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgersql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'cutall_api',
     }
 }
