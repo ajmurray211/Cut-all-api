@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-n4#zv$$_lo%5zc$vjks))18c_-2sx7681cww(jhb&ork4^7#*1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://fast-meadow-65226.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['https://fast-meadow-65226.herokuapp.com/', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -79,10 +79,13 @@ WSGI_APPLICATION = 'cutall_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cutall_api',
+        'NAME': 'dd71bge9rac9k9',
+        'HOST': 'ec2-44-210-36-247.compute-1.amazonaws.com',
+        'PORT': 5432,
+        'USER': 'xuhrzfopggxwty',
+        'PASSWORD': 'e078d316b596cd01acd74a76ff86e6bb1618092fde18ac826b11cefb5daf4e19'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
