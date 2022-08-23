@@ -8,12 +8,15 @@ from ..serializers.parts import PartSerializer
 class PartsView(APIView):
     def get(self, request):
         name = request.GET.get('name', None)
-        onHand = request.GET.get('onHand', None)
+        onHandDec = request.GET.get('onHandDec', None)
+        onHandAce = request.GET.get('onHandAce', None)
         tool = request.GET.get('tool', None)
         if name is not None:
             part= Part.objects.all().filter(name__contains=name)
-        elif onHand is not  None:
-            part= Part.objects.all().filter(onHand=onHand)
+        elif onHandDec is not  None:
+            part= Part.objects.all().order_by('-onHand').values()
+        elif onHandAce is not  None:
+            part= Part.objects.all().order_by('onHand').values()
         elif tool is not  None:
             part= Part.objects.all().filter(tool=tool)
         else:
