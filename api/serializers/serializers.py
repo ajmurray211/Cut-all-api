@@ -13,7 +13,7 @@ class WorkerSerializer(serializers.ModelSerializer):
         )
 
 class PartSerializer(serializers.ModelSerializer):
-    workerKey = WorkerSerializer(many=True, read_only=True)
+    drawList = WorkerSerializer(many=True, read_only=True)
     class Meta:
         model = Part
         fields = [
@@ -21,5 +21,5 @@ class PartSerializer(serializers.ModelSerializer):
             'name',
             'onHand',
             'tool',
-            'workerKey'
+            'drawList'
         ]
