@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models.parts import Part
+from ..models.models import Part, Worker
 from django.shortcuts import get_object_or_404
-from ..serializers.parts import PartSerializer
+from ..serializers.serializers import PartSerializer, WorkerSerializer
 
 class PartsView(APIView):
     def get(self, request):
@@ -53,3 +53,25 @@ class PartView(APIView):
         part = Part.objects.all()
         data = PartSerializer(part, many=True).data
         return Response(data)
+
+class WorkersView(APIView):
+    def get(self, request):
+        name = request.GET.get('name', None)
+        onHandDec = request.GET.get('onHandDec', None)
+        tool = request.GET.get('tool', None)
+        if name is not None:
+            worker= Worker.objects.all().order_by(name__contains=name)
+        elif tool is not  None:
+            worker= Worker.objects.all().filter(tool=tool)
+        else:
+            worker = Worker.objects.all().order_by('name')
+        data = WorkerSerializer(worker, many=True).data
+        return Response(data)
+    
+    def post(self, request):
+        worker = WorkerSerializer(data = request.data)
+        if worker.is_valid():
+            worker.save()
+            return Response(worker.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(worker.errors, status=status.HTTP_400_BAD_REQUEST)

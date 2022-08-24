@@ -1,6 +1,16 @@
 from rest_framework import serializers
-from ..serializers.worker import WorkerSerializer
-from ..models.parts import Part
+from ..models.models import Part, Worker
+
+
+class WorkerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Worker
+        fields = (
+            'id',
+            'name',
+            'amountTaken',
+            'dateTaken'
+        )
 
 class PartSerializer(serializers.ModelSerializer):
     workerKey = WorkerSerializer(many=True, read_only=True)

@@ -1,6 +1,5 @@
 from django.contrib import admin
-from api.models.parts import Part
-from api.models.worker import Worker
+from api.models.models import Part, Worker
 
 # Register your models here.
 
