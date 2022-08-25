@@ -4,6 +4,7 @@ from rest_framework import status
 from ..models.models import Part, Worker
 from django.shortcuts import get_object_or_404
 from ..serializers.serializers import PartSerializer, WorkerSerializer
+from django.db.models.functions import Lower
 
 class PartsView(APIView):
     def get(self, request):
@@ -57,14 +58,16 @@ class PartView(APIView):
 class WorkersView(APIView):
     def get(self, request):
         name = request.GET.get('name', None)
-        onHandDec = request.GET.get('onHandDec', None)
-        tool = request.GET.get('tool', None)
+        amountTaken = request.GET.get('amountTaken', None)
+        dateTaken = request.GET.get('dateTaken', None)
         if name is not None:
-            worker= Worker.objects.all().order_by(name__contains=name)
-        elif tool is not  None:
-            worker= Worker.objects.all().filter(tool=tool)
+            worker= Worker.objects.all().filter(name__contains=name).order_by('dateTaken')
+        elif dateTaken is not  None:
+            worker= Worker.objects.all().order_by('name','-dateTaken')
+        elif amountTaken is not  None:
+            worker= Worker.objects.all().order_by('name','amountTaken' )
         else:
-            worker = Worker.objects.all().order_by('name')
+            worker = Worker.objects.all().order_by('name', 'id')
         data = WorkerSerializer(worker, many=True).data
         return Response(data)
     
@@ -75,3 +78,25 @@ class WorkersView(APIView):
             return Response(worker.data, status=status.HTTP_201_CREATED)
         else:
             return Response(worker.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class WorkerView(APIView):
+    def get(self,request, pk):
+        worker = get_object_or_404(Worker, pk=pk)
+        data = WorkerSerializer(worker).data
+        return Response(data)
+
+    def put(self, request, pk):
+        worker = get_object_or_404(Worker, pk=pk)
+        data = WorkerSerializer(worker, data=request.data)
+        if data.is_valid():
+            data.save()
+            return Response(data.data, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):
+        worker = get_object_or_404(Worker, pk=pk)
+        worker.delete()
+        worker = Worker.objects.all()
+        data = WorkerSerializer(worker, many=True).data
+        return Response(data)
