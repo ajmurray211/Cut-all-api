@@ -61,7 +61,7 @@ class WorkersView(APIView):
         amountTaken = request.GET.get('amountTaken', None)
         dateTaken = request.GET.get('dateTaken', None)
         if name is not None:
-            worker= Worker.objects.all().filter(name__contains=name).order_by('dateTaken')
+            worker= Worker.objects.all().filter(name__contains=name).order_by('id')
         elif dateTaken is not  None:
             worker= Worker.objects.all().order_by('name','-dateTaken')
         elif amountTaken is not  None:
