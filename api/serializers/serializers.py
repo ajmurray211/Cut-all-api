@@ -23,3 +23,4 @@ class PartSerializer(serializers.ModelSerializer):
             'tool',
             'drawList'
         ]
+        depth=1

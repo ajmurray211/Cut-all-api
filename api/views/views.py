@@ -7,6 +7,16 @@ from ..serializers.serializers import PartSerializer, WorkerSerializer
 from django.db.models.functions import Lower
 
 class PartsView(APIView):
+    def put(self,request, *args, **kwargs):
+        data = request.data
+        list = request.data['drawList']
+        part = Part.objects.get(name=data['name'], drawList=data['drawList'])
+        for pull in list:
+            pull_obj = Worker.objects.get(id=pull['id'])
+            part.drawList.update(pull_obj)
+        serializer = PartSerializer(part)
+        return Response(serializer.data)
+
     def get(self, request):
         name = request.GET.get('name', None)
         onHandDec = request.GET.get('onHandDec', None)
@@ -21,7 +31,7 @@ class PartsView(APIView):
         elif tool is not  None:
             part= Part.objects.all().filter(tool=tool)
         else:
-            part = Part.objects.all()
+            part = Part.objects.all().order_by('-name')
         data = PartSerializer(part, many=True).data
         return Response(data)
     
