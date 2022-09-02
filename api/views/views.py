@@ -11,7 +11,12 @@ class PartsView(APIView):
         b = Part.objects.get(id=33)
         e = Worker.objects.get(id=request.data['drawList'][0]['id'])
         b.drawList.add(e) 
-        return
+        data = PartSerializer(b, data=request.data)
+        if data.is_valid():
+            data.save()
+            return Response(data.data, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         name = request.GET.get('name', None)
@@ -47,11 +52,11 @@ class PartView(APIView):
 
     def put(self, request, pk):
         part = get_object_or_404(Part, pk=pk)
+        if 'drawList' in request.data:
+            drawListUpdate = Worker.objects.get(id=request.data['drawList'])
+            part.drawList.add(drawListUpdate) 
         data = PartSerializer(part, data=request.data)
-        drawlist = request.data['drawList']
-        list = WorkerSerializer(drawlist)
         if data.is_valid():
-            
             data.save()
             return Response(data.data, status=status.HTTP_202_ACCEPTED)
         else:
