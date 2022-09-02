@@ -8,14 +8,10 @@ from django.db.models.functions import Lower
 
 class PartsView(APIView):
     def put(self,request, *args, **kwargs):
-        data = request.data
-        list = request.data['drawList']
-        part = Part.objects.get(name=data['name'], drawList=data['drawList'])
-        for pull in list:
-            pull_obj = Worker.objects.get(id=pull['id'])
-            part.drawList.update(pull_obj)
-        serializer = PartSerializer(part)
-        return Response(serializer.data)
+        b = Part.objects.get(id=33)
+        e = Worker.objects.get(id=request.data['drawList'][0]['id'])
+        b.drawList.add(e) 
+        return
 
     def get(self, request):
         name = request.GET.get('name', None)
@@ -25,13 +21,13 @@ class PartsView(APIView):
         if name is not None:
             part= Part.objects.all().filter(name__contains=name)
         elif onHandDec is not  None:
-            part= Part.objects.all().order_by('-onHand').values()
+            part= Part.objects.all().filter().order_by('-onHand').values()
         elif onHandAce is not  None:
-            part= Part.objects.all().order_by('onHand').values()
+            part= Part.objects.all().filter(onHandAce=onHandAce).order_by('onHand').values()
         elif tool is not  None:
             part= Part.objects.all().filter(tool=tool)
         else:
-            part = Part.objects.all().order_by('-name')
+            part = Part.objects.all().filter().order_by('-name')
         data = PartSerializer(part, many=True).data
         return Response(data)
     
@@ -52,7 +48,10 @@ class PartView(APIView):
     def put(self, request, pk):
         part = get_object_or_404(Part, pk=pk)
         data = PartSerializer(part, data=request.data)
+        drawlist = request.data['drawList']
+        list = WorkerSerializer(drawlist)
         if data.is_valid():
+            
             data.save()
             return Response(data.data, status=status.HTTP_202_ACCEPTED)
         else:
